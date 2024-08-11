@@ -12,7 +12,6 @@ import io.micronaut.http.annotation.Get;
 // import io.micronaut.http.annotation.Body;
 
 import jakarta.inject.Inject;
-// import java.util.List;
 
 @Controller("/search-history")
 public class SearchHistoryController {
