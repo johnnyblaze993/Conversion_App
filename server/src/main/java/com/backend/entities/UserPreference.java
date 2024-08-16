@@ -5,7 +5,7 @@ import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
 
 @Introspected
-@MappedEntity
+@MappedEntity("user_preferences")
 public class UserPreference {
     @Id
     private Long userId;

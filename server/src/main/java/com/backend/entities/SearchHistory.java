@@ -5,7 +5,7 @@ import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
 
 @Introspected
-@MappedEntity
+@MappedEntity("search_history")
 public class SearchHistory {
     @Id
     private Long id;

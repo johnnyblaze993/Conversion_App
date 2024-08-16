@@ -5,7 +5,7 @@ import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
 
 @Introspected
-@MappedEntity
+@MappedEntity("units")
 public class Unit {
     @Id
     private Long id;

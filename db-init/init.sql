@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS digimon (
+CREATE TABLE digimon (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     type VARCHAR(50) NOT NULL,
@@ -108,6 +108,13 @@ CREATE INDEX idx_user_activity_log_user_id ON user_activity_log(user_id);
 
 -- INSERT DATA INTO TABLES
 
+-- Insert data into digimon table
+INSERT INTO digimon (name, type, digimon_number)
+VALUES 
+('Agumon', 'Reptile', 1),
+('Gabumon', 'Animal', 2),
+('Piyomon', 'Bird', 3);
+
 -- Insert data into units table
 INSERT INTO units (unit_name) VALUES 
 ('cup'), ('tablespoon'), ('teaspoon'), 
@@ -131,10 +138,10 @@ INSERT INTO search_history (user_id, ingredient, original_measurement, original_
 
 -- Insert data into conversion_lists table
 INSERT INTO conversion_lists (user_id, name, favorite) VALUES 
-(1, 'Ash\'s Favorite Ingredients', TRUE),
-(2, 'Misty\'s Potions', FALSE),
-(3, 'Brock\'s Recipes', TRUE),
-(4, 'Gary\'s Training Supplies', FALSE);
+(1, 'Ashs Favorite Ingredients', TRUE),
+(2, 'Mistys Potions', FALSE),
+(3, 'Brocks Recipes', TRUE),
+(4, 'Garys Training Supplies', FALSE);
 
 -- Insert data into conversions table
 INSERT INTO conversions (user_id, ingredient, original_measurement, original_unit_id, converted_measurement, converted_unit_id, list_id) VALUES 
@@ -164,9 +171,3 @@ INSERT INTO user_activity_log (user_id, activity) VALUES
 (3, 'Favorited a conversion list'),
 (4, 'Commented on a list');
 
--- Insert data into digimon table
-INSERT INTO digimon (name, type, digimon_number)
-VALUES 
-('Agumon', 'Reptile', 1),
-('Gabumon', 'Animal', 2),
-('Piyomon', 'Bird', 3);

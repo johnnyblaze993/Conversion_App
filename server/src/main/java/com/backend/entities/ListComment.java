@@ -5,7 +5,7 @@ import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
 
 @Introspected
-@MappedEntity
+@MappedEntity("list_comments")
 public class ListComment {
     @Id
     private Long id;
