@@ -1,5 +1,7 @@
 package com.backend.repositories;
 
+import java.util.List;
+
 import com.backend.entities.*;
 
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
@@ -8,4 +10,7 @@ import io.micronaut.data.repository.CrudRepository;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface ConversionRepository extends CrudRepository<Conversion, Long> {
+    List<Conversion> findByListId(Long listId);
+
+    List<Conversion> findByUserId(Long userId);
 }

@@ -8,4 +8,5 @@ import io.micronaut.data.repository.CrudRepository;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface UserPreferenceRepository extends CrudRepository<UserPreference, Long> {
+    UserPreference findByUserId(Long userId);
 }

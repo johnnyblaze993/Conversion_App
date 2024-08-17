@@ -1,13 +1,16 @@
 package com.backend.entities;
 
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.data.annotation.GeneratedValue;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
 
 @Introspected
 @MappedEntity("search_history")
 public class SearchHistory {
+
     @Id
+    @GeneratedValue
     private Long id;
     private Long userId;
     private String ingredient;

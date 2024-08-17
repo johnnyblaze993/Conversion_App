@@ -1,13 +1,16 @@
 package com.backend.entities;
 
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.data.annotation.GeneratedValue;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
 
 @Introspected
 @MappedEntity("list_comments")
 public class ListComment {
+
     @Id
+    @GeneratedValue
     private Long id;
     private Long listId;
     private Long userId;
