@@ -14,6 +14,7 @@ import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import jakarta.inject.Inject;
 import java.util.List;
+import java.util.Optional;
 
 @Controller("/user-preferences")
 public class UserPreferenceController {
@@ -31,7 +32,18 @@ public class UserPreferenceController {
     }
 
     @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public HttpResponse<UserPreference> createUserPreference(@Body UserPreference userPreference) {
-        return HttpResponse.created(userPreferenceRepository.save(userPreference));
+    public HttpResponse<UserPreference> createOrUpdateUserPreference(@Body UserPreference userPreference) {
+        // Check if the user already has a preference
+        Optional<UserPreference> existingPreference = Optional
+                .ofNullable(userPreferenceRepository.findByUserId(userPreference.getUserId()));
+        if (existingPreference.isPresent()) {
+            // Update existing preference
+            UserPreference preferenceToUpdate = existingPreference.get();
+            preferenceToUpdate.setPreferredMeasurement(userPreference.getPreferredMeasurement());
+            return HttpResponse.ok(userPreferenceRepository.update(preferenceToUpdate));
+        } else {
+            // Create new preference
+            return HttpResponse.created(userPreferenceRepository.save(userPreference));
+        }
     }
 }
