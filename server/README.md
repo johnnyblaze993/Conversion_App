@@ -1,54 +1,49 @@
-## Micronaut 4.1.4 Documentation
+# endpoints per table
 
-- [User Guide](https://docs.micronaut.io/4.1.4/guide/index.html)
-- [API Reference](https://docs.micronaut.io/4.1.4/api/index.html)
-- [Configuration Reference](https://docs.micronaut.io/4.1.4/guide/configurationreference.html)
-- [Micronaut Guides](https://guides.micronaut.io/index.html)
----
+    endpoints per table
 
-- [Jib Gradle Plugin](https://plugins.gradle.org/plugin/com.google.cloud.tools.jib)
-- [Shadow Gradle Plugin](https://plugins.gradle.org/plugin/com.github.johnrengelman.shadow)
-- [Micronaut Gradle Plugin documentation](https://micronaut-projects.github.io/micronaut-gradle-plugin/latest/)
-- [GraalVM Gradle Plugin documentation](https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html)
-## Feature data-jdbc documentation
+    1. Units
+    GET /units
+    POST /units
+    PUT /units/{id}
+    DELETE /units/{id}
 
-- [Micronaut Data JDBC documentation](https://micronaut-projects.github.io/micronaut-data/latest/guide/index.html#jdbc)
+    2. Users
+    GET /users
+    POST /users
+    PUT /users/{id}
+    DELETE /users/{id}
+    GET /users/username/{username}
+    GET /users/email/{email}
 
+    3. Search History
+    GET /search-history
+    POST /search-history
+    GET /search-history/user/{userId}
 
-## Feature test-resources documentation
+    4. Conversion Lists
+    GET /conversion-lists
+    POST /conversion-lists
+    PUT /conversion-lists/{id}/favorite
+    GET /conversion-lists/user/{userId}
 
-- [Micronaut Test Resources documentation](https://micronaut-projects.github.io/micronaut-test-resources/latest/guide/)
+    5. Conversions
+    GET /conversions
+    POST /conversions
+    GET /conversions/list/{listId}
+    GET /conversions/user/{userId}
 
+    6. User Preferences
+    GET /user-preferences
+    POST /user-preferences
+    GET /user-preferences/user/{userId}
 
-## Feature security-jwt documentation
-
-- [Micronaut Security JWT documentation](https://micronaut-projects.github.io/micronaut-security/latest/guide/index.html)
-
-
-## Feature micronaut-aot documentation
-
-- [Micronaut AOT documentation](https://micronaut-projects.github.io/micronaut-aot/latest/guide/)
-
-
-## Feature jdbc-hikari documentation
-
-- [Micronaut Hikari JDBC Connection Pool documentation](https://micronaut-projects.github.io/micronaut-sql/latest/guide/index.html#jdbc)
-
-
-## Feature micronaut-test-rest-assured documentation
-
-- [Micronaut Micronaut-Test REST-assured documentation](https://micronaut-projects.github.io/micronaut-test/latest/guide/#restAssured)
-
-- [https://rest-assured.io/#docs](https://rest-assured.io/#docs)
-
-
-## Feature http-client documentation
-
-- [Micronaut HTTP Client documentation](https://docs.micronaut.io/latest/guide/index.html#nettyHttpClient)
-
-
-## Feature reactor documentation
-
-- [Micronaut Reactor documentation](https://micronaut-projects.github.io/micronaut-reactor/snapshot/guide/index.html)
-
-
+    7. List Comments
+    GET /list-comments
+    POST /list-comments
+    GET /list-comments/list/{listId}
+    GET /list-comments/user/{userId}
+    8. User Activity Logs
+    GET /user-activity-log
+    POST /user-activity-log
+    GET /user-activity-log/user/{userId}
