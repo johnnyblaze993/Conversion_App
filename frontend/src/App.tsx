@@ -2,6 +2,7 @@ import "./App.css";
 import axios from "axios";
 import Digimon from "../Interfaces/DigimonInterface";
 import { useState } from "react";
+import React from "react";
 
 function App() {
 	const [digimons, setDigimons] = useState<Digimon[]>([]);
