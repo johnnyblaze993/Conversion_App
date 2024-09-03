@@ -6,6 +6,7 @@ import Convert from './components/Convert';
 import Favorites from './components/Favorites';
 import Lists from './components/Lists';
 import Preferences from './components/Preferences';
+import LoginPage from './components/LoginPage';
 
 const App: React.FC = () => {
   return (
@@ -18,7 +19,8 @@ const App: React.FC = () => {
           <Button color="inherit" component={Link} to="/">Convert</Button>
           <Button color="inherit" component={Link} to="/favorites">Fav</Button>
           <Button color="inherit" component={Link} to="/lists">Lists</Button>
-          <Button color="inherit" component={Link} to="/preferences">In/Out</Button>
+          <Button color="inherit" component={Link} to="/preferences">Preferences</Button>
+		  <Button color="inherit" component={Link} to="/login">Login</Button>
         </Toolbar>
       </AppBar>
       <Container maxWidth="lg" style={{ height: '100vh', width: '100vw', padding: 0, display: 'flex', flexDirection: 'column' }}>
@@ -28,6 +30,7 @@ const App: React.FC = () => {
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/lists" element={<Lists />} />
           <Route path="/preferences" element={<Preferences />} />
+		  <Route path="/login" element={<LoginPage />} />
         </Routes>
       </Container>
     </Router>
