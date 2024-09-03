@@ -9,6 +9,6 @@ cd server && ./gradlew assemble
 cd ..
 
 # Rebuild and restart docker containers
-docker-compose down
-docker-compose build --no-cache
-docker-compose up -d
+docker compose down
+docker compose build --no-cache
+docker compose up -d
