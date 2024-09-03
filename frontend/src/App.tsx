@@ -1,41 +1,37 @@
-import "./App.css";
-import axios from "axios";
-import Digimon from "../Interfaces/DigimonInterface";
-import { useState } from "react";
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { AppBar, Toolbar, Button, Typography, Container } from '@mui/material';
+import Home from './components/Home';
+import Convert from './components/Convert';
+import Favorites from './components/Favorites';
+import Lists from './components/Lists';
+import Preferences from './components/Preferences';
 
-function App() {
-	const [digimons, setDigimons] = useState<Digimon[]>([]);
-
-	const fetchDigimons = () => {
-		axios.get("http://localhost:8081/digimon").then((response) => {
-			setDigimons(response.data);
-		});
-	};
-
-	return (
-		<>
-			<h2>Digi app!!!</h2>
-			<button onClick={fetchDigimons}>Load Digimons</button>
-			<div style={{ display: "flex", flexWrap: "wrap" }}>
-				{digimons.map((digimon) => (
-					<div
-						key={digimon.id}
-						style={{
-							border: "1px solid black",
-							margin: "10px",
-							padding: "10px",
-							width: "200px",
-							borderRadius: "10px",
-						}}
-					>
-						<h3>{digimon.name}</h3>
-						<p>Type: {digimon.type}</p>
-						<p>Number: {digimon.digimonNumber}</p>
-					</div>
-				))}
-			</div>
-		</>
-	);
+const App: React.FC = () => {
+  return (
+    <Router>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" style={{ flexGrow: 1 }}>
+            App Name
+          </Typography>
+          <Button color="inherit" component={Link} to="/">Convert</Button>
+          <Button color="inherit" component={Link} to="/favorites">Fav</Button>
+          <Button color="inherit" component={Link} to="/lists">Lists</Button>
+          <Button color="inherit" component={Link} to="/preferences">In/Out</Button>
+        </Toolbar>
+      </AppBar>
+      <Container maxWidth="lg" style={{ height: '100vh', width: '100vw', padding: 0, display: 'flex', flexDirection: 'column' }}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/convert" element={<Convert />} />
+          <Route path="/favorites" element={<Favorites />} />
+          <Route path="/lists" element={<Lists />} />
+          <Route path="/preferences" element={<Preferences />} />
+        </Routes>
+      </Container>
+    </Router>
+  );
 }
 
 export default App;
