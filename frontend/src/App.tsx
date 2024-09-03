@@ -14,7 +14,7 @@ const App: React.FC = () => {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" style={{ flexGrow: 1 }}>
-            App Name
+            Conversion App
           </Typography>
           <Button color="inherit" component={Link} to="/">Convert</Button>
           <Button color="inherit" component={Link} to="/favorites">Fav</Button>
