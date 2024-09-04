@@ -11,12 +11,12 @@ import { useAuthStore } from './stores/authStore';
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuthStore();
-  
+
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
 };
 
 const App: React.FC = () => {
-  const { isAuthenticated, logout } = useAuthStore();
+  const { isAuthenticated, logout, user } = useAuthStore();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -35,13 +35,23 @@ const App: React.FC = () => {
           <Button color="inherit" component={Link} to="/favorites">Fav</Button>
           <Button color="inherit" component={Link} to="/lists">Lists</Button>
           <Button color="inherit" component={Link} to="/preferences">Preferences</Button>
+
           {isAuthenticated ? (
             <Button color="inherit" onClick={handleLogout}>Logout</Button>
           ) : (
             <Button color="inherit" component={Link} to="/login">Login</Button>
           )}
+
         </Toolbar>
       </AppBar>
+  
+            {/* Welcome message centered */}
+            {isAuthenticated && user && (
+              <Typography variant="h6" style={{ flexGrow: 1, textAlign: 'center' }}>
+                Welcome, {user.username}!
+              </Typography>
+            )}
+   
       <Container maxWidth="lg" style={{ height: '100vh', width: '100vw', padding: 0, display: 'flex', flexDirection: 'column' }}>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
