@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import { Container, Paper, Typography, Box, Button } from '@mui/material';
-import { useFavoritesStore } from '../stores/favoritesStore';
+import { useListsStore } from '../stores/listsStore';  // Import the list store
 
 const Favorites: React.FC = () => {
-  const { favorites, fetchFavorites, toggleFavorite } = useFavoritesStore();
+  const { lists, fetchLists, toggleFavorite } = useListsStore();  // Use the list store
 
   useEffect(() => {
-    // Fetch the user's favorite conversion lists on component mount
-    fetchFavorites();
-  }, [fetchFavorites]);
+    // Fetch the user's conversion lists on component mount
+    fetchLists();  // This will include both favorite and non-favorite lists
+  }, [fetchLists]);
 
   return (
     <Container
@@ -31,18 +31,18 @@ const Favorites: React.FC = () => {
         }}
       >
         <Typography variant="h5" gutterBottom>Favorite Conversions</Typography>
-        {favorites.filter(fav => fav.favorite).length > 0 ? (  // Filter favorites
-          favorites
-            .filter(fav => fav.favorite)  // Show only favorites
-            .map((favorite) => (
-              <Paper key={favorite.id} sx={styles.listItem}>
-                <Typography variant="body1">{favorite.name}</Typography>
+        {lists.filter(list => list.favorite).length > 0 ? (  // Filter favorites from lists
+          lists
+            .filter(list => list.favorite)  // Show only favorite lists
+            .map((list) => (
+              <Paper key={list.id} sx={styles.listItem}>
+                <Typography variant="body1">{list.name}</Typography>
                 <Button
                   variant="contained"
-                  color={favorite.favorite ? 'secondary' : 'primary'}
-                  onClick={() => toggleFavorite(favorite.id, favorite.favorite)} // Pass current favorite state
+                  color={list.favorite ? 'secondary' : 'primary'}
+                  onClick={() => toggleFavorite(list.id, list.favorite)} // Pass current favorite state
                 >
-                  {favorite.favorite ? 'Unfavorite' : 'Favorite'}
+                  {list.favorite ? 'Unfavorite' : 'Favorite'}
                 </Button>
               </Paper>
             ))

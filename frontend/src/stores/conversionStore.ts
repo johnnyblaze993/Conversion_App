@@ -1,4 +1,3 @@
-// src/stores/conversionStore.ts
 import create from 'zustand';
 import axios from 'axios';
 import { useAuthStore } from './authStore';
@@ -6,46 +5,52 @@ import { useAuthStore } from './authStore';
 interface ConversionItem {
   ingredient: string;
   originalMeasurement: number;
-  originalUnit: string;
+  originalUnitId: number;
   convertedMeasurement: number;
-  convertedUnit: string;
+  convertedUnitId: number;
 }
 
 interface ConversionState {
-  createConversionList: (name: string, items: ConversionItem[], favorite: boolean) => void;
+  addConversionsToList: (listId: number, items: ConversionItem[]) => Promise<void>;
+  fetchConversionsByList: (listId: number) => void;
+  conversions: ConversionItem[];
 }
 
 export const useConversionStore = create<ConversionState>((set) => ({
-  createConversionList: async (name: string, items: ConversionItem[], favorite: boolean) => {
+  conversions: [],
+
+  // Add conversion items to a specific conversion list
+  addConversionsToList: async (listId: number, items: ConversionItem[]) => {
     const user = useAuthStore.getState().user;
     if (!user) return;
 
     try {
-      // First, create the conversion list with the favorite status
-      const listResponse = await axios.post('http://localhost:8081/conversion-lists', {
-        userId: user.id,
-        name: name,
-        favorite: favorite,  // Pass the favorite status
-      });
-
-      const listId = listResponse.data.id;
-
-      // Then, add each conversion item to the conversions table
+      // Add each conversion item to the conversions table
       for (const item of items) {
         await axios.post('http://localhost:8081/conversions', {
           userId: user.id,
           listId: listId,
           ingredient: item.ingredient,
           originalMeasurement: item.originalMeasurement,
-          originalUnitId: item.originalUnit, // Assuming these IDs are coming from a units table
+          originalUnitId: item.originalUnitId, // Assuming these IDs are coming from a units table
           convertedMeasurement: item.convertedMeasurement,
-          convertedUnitId: item.convertedUnit, // Assuming these IDs are coming from a units table
+          convertedUnitId: item.convertedUnitId, // Assuming these IDs are coming from a units table
         });
       }
 
-      console.log('Conversion list and items created successfully.');
+      console.log('Conversion items added successfully.');
     } catch (error) {
-      console.error('Error creating conversion list or items:', error);
+      console.error('Error adding conversion items:', error);
+    }
+  },
+
+  // Fetch conversions for a specific list
+  fetchConversionsByList: async (listId: number) => {
+    try {
+      const response = await axios.get(`http://localhost:8081/conversions/list/${listId}`);
+      set({ conversions: response.data });
+    } catch (error) {
+      console.error('Error fetching conversions:', error);
     }
   },
 }));

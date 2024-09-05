@@ -1,36 +1,78 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Container, Paper, Typography, Grid, MenuItem } from '@mui/material';
-import axios from 'axios';
-import { useConversionStore } from '../stores/conversionStore';
 import { useUnitStore } from '../stores/unitStore';
-import { convertMeasurement } from '../utils/conversionUtils'; // Import the helper function
+import { useAuthStore } from '../stores/authStore';
+import { useConversionStore } from '../stores/conversionStore';
+import { useListsStore } from '../stores/listsStore';
+import { convertMeasurement } from '../utils/conversionUtils';
 
 const Convert: React.FC = () => {
   const [listName, setListName] = useState<string>('');  
   const [items, setItems] = useState([
     { ingredient: '', originalMeasurement: '', originalUnit: '', convertedMeasurement: '', convertedUnit: '' }
   ]);
-
-  const createConversionList = useConversionStore((state) => state.createConversionList);
   const { units, fetchUnits } = useUnitStore();
+  const { user } = useAuthStore(); // Fetch the logged-in user
+  const { createList } = useListsStore();
+  const { addConversionsToList } = useConversionStore();
 
   useEffect(() => {
     fetchUnits();
   }, [fetchUnits]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const formattedItems = items.map(item => ({
-      ingredient: item.ingredient,
-      originalMeasurement: parseFloat(item.originalMeasurement),
-      originalUnit: item.originalUnit,
-      convertedMeasurement: parseFloat(item.convertedMeasurement),
-      convertedUnit: item.convertedUnit,
-    }));
-
-    createConversionList(listName, formattedItems, false); // Assuming false for favorite for now
+  // Function to map unit name to unit ID for the request
+  const getUnitIdByName = (unitName: string) => {
+    const unit = units.find(u => u.unitName === unitName);
+    return unit ? unit.id : null;
   };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    // Guard against missing user
+    if (!user) {
+      console.error('User is not logged in');
+      return;
+    }
+  
+    try {
+      // Step 1: Create the conversion list
+      const listResponse = await createList(listName, false); // Create the list and return listId
+  
+      if (listResponse) {
+        const listId = listResponse.id;
+  
+        // Step 2: Prepare the conversion items
+        const formattedItems = items.map((item) => {
+          const originalUnitId = getUnitIdByName(item.originalUnit);
+          const convertedUnitId = getUnitIdByName(item.convertedUnit);
+  
+          // Check for missing unit IDs and handle the case
+          if (originalUnitId === null || convertedUnitId === null) {
+            alert('Please select valid units for all items.');
+            throw new Error('Invalid unit ID');
+          }
+  
+          return {
+            ingredient: item.ingredient,
+            originalMeasurement: parseFloat(item.originalMeasurement),
+            originalUnitId,
+            convertedMeasurement: parseFloat(item.convertedMeasurement),
+            convertedUnitId,
+          };
+        });
+  
+        // Step 3: Submit the valid items
+        await addConversionsToList(listId, formattedItems);
+  
+        alert('Conversion list and items added successfully!');
+      }
+    } catch (error) {
+      console.error('Error creating conversion list or adding items:', error);
+    }
+  };
+  
+  
 
   const addNewItem = () => {
     setItems([...items, { ingredient: '', originalMeasurement: '', originalUnit: '', convertedMeasurement: '', convertedUnit: '' }]);
@@ -40,10 +82,8 @@ const Convert: React.FC = () => {
     const updatedItems = [...items];
     updatedItems[index] = { ...updatedItems[index], [field]: value };
 
-    // Automatically populate the converted measurement when originalMeasurement, originalUnit, or convertedUnit change
     if (['originalMeasurement', 'originalUnit', 'convertedUnit'].includes(field)) {
       const { originalMeasurement, originalUnit, convertedUnit } = updatedItems[index];
-      
       if (originalMeasurement && originalUnit && convertedUnit) {
         const convertedValue = convertMeasurement(parseFloat(originalMeasurement), originalUnit, convertedUnit);
         updatedItems[index].convertedMeasurement = convertedValue ? convertedValue.toString() : '';
@@ -56,7 +96,7 @@ const Convert: React.FC = () => {
   return (
     <Container maxWidth="md" style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <Paper style={{ padding: '20px', backgroundColor: '#333', color: 'white', width: '100%' }}>
-        <Typography variant="h5" gutterBottom>Create New Conversion List</Typography>
+      <Typography variant="h5" gutterBottom>Create New Conversion List</Typography>
         <form onSubmit={handleSubmit}>
           <TextField
             label="List Name"
