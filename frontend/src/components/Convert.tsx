@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { TextField, Button, Container, Paper, Typography, Grid, Checkbox, FormControlLabel, MenuItem } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { TextField, Button, Container, Paper, Typography, Grid, MenuItem } from '@mui/material';
+import axios from 'axios';
 import { useConversionStore } from '../stores/conversionStore';
 import { useUnitStore } from '../stores/unitStore';
+import { convertMeasurement } from '../utils/conversionUtils'; // Import the helper function
 
 const Convert: React.FC = () => {
-  const [listName, setListName] = useState<string>('');
-  const [favorite, setFavorite] = useState<boolean>(false); // State for the favorite checkbox
+  const [listName, setListName] = useState<string>('');  
   const [items, setItems] = useState([
     { ingredient: '', originalMeasurement: '', originalUnit: '', convertedMeasurement: '', convertedUnit: '' }
   ]);
+
   const createConversionList = useConversionStore((state) => state.createConversionList);
   const { units, fetchUnits } = useUnitStore();
 
-  // Fetch all units on component mount
   useEffect(() => {
     fetchUnits();
   }, [fetchUnits]);
@@ -28,8 +29,7 @@ const Convert: React.FC = () => {
       convertedUnit: item.convertedUnit,
     }));
 
-    // Submit the list along with the favorite status
-    createConversionList(listName, formattedItems, favorite);
+    createConversionList(listName, formattedItems, false); // Assuming false for favorite for now
   };
 
   const addNewItem = () => {
@@ -39,19 +39,22 @@ const Convert: React.FC = () => {
   const updateItem = (index: number, field: string, value: string) => {
     const updatedItems = [...items];
     updatedItems[index] = { ...updatedItems[index], [field]: value };
+
+    // Automatically populate the converted measurement when originalMeasurement, originalUnit, or convertedUnit change
+    if (['originalMeasurement', 'originalUnit', 'convertedUnit'].includes(field)) {
+      const { originalMeasurement, originalUnit, convertedUnit } = updatedItems[index];
+      
+      if (originalMeasurement && originalUnit && convertedUnit) {
+        const convertedValue = convertMeasurement(parseFloat(originalMeasurement), originalUnit, convertedUnit);
+        updatedItems[index].convertedMeasurement = convertedValue ? convertedValue.toString() : '';
+      }
+    }
+
     setItems(updatedItems);
   };
 
   return (
-    <Container
-      maxWidth="md"
-      style={{
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
+    <Container maxWidth="md" style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <Paper style={{ padding: '20px', backgroundColor: '#333', color: 'white', width: '100%' }}>
         <Typography variant="h5" gutterBottom>Create New Conversion List</Typography>
         <form onSubmit={handleSubmit}>
@@ -106,7 +109,7 @@ const Convert: React.FC = () => {
                   InputProps={{ style: { color: 'white' } }}
                 >
                   {units.map((unit) => (
-                    <MenuItem key={unit.id} value={unit.id}>
+                    <MenuItem key={unit.id} value={unit.unitName}>
                       {unit.unitName}
                     </MenuItem>
                   ))}
@@ -123,6 +126,7 @@ const Convert: React.FC = () => {
                   onChange={(e) => updateItem(index, 'convertedMeasurement', e.target.value)}
                   InputLabelProps={{ style: { color: 'white' } }}
                   InputProps={{ style: { color: 'white' } }}
+                  disabled // Auto-populated based on conversion
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -138,7 +142,7 @@ const Convert: React.FC = () => {
                   InputProps={{ style: { color: 'white' } }}
                 >
                   {units.map((unit) => (
-                    <MenuItem key={unit.id} value={unit.id}>
+                    <MenuItem key={unit.id} value={unit.unitName}>
                       {unit.unitName}
                     </MenuItem>
                   ))}
