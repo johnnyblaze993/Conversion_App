@@ -21,27 +21,31 @@ const Favorites: React.FC = () => {
         backgroundColor: '#222',
       }}
     >
-      <Box sx={{
-        width: '50%',
-        padding: '20px',
-        backgroundColor: '#333',
-        color: 'white',
-        borderRadius: '5px',
-      }}>
+      <Box
+        sx={{
+          width: '50%',
+          padding: '20px',
+          backgroundColor: '#333',
+          color: 'white',
+          borderRadius: '5px',
+        }}
+      >
         <Typography variant="h5" gutterBottom>Favorite Conversions</Typography>
-        {favorites.length > 0 ? (
-          favorites.map((favorite) => (
-            <Paper key={favorite.id} sx={styles.listItem}>
-              <Typography variant="body1">{favorite.name}</Typography>
-              <Button
-                variant="contained"
-                color={favorite.favorite ? 'secondary' : 'primary'}
-                onClick={() => toggleFavorite(favorite.id)}
-              >
-                {favorite.favorite ? 'Unfavorite' : 'Favorite'}
-              </Button>
-            </Paper>
-          ))
+        {favorites.filter(fav => fav.favorite).length > 0 ? (  // Filter favorites
+          favorites
+            .filter(fav => fav.favorite)  // Show only favorites
+            .map((favorite) => (
+              <Paper key={favorite.id} sx={styles.listItem}>
+                <Typography variant="body1">{favorite.name}</Typography>
+                <Button
+                  variant="contained"
+                  color={favorite.favorite ? 'secondary' : 'primary'}
+                  onClick={() => toggleFavorite(favorite.id, favorite.favorite)} // Pass current favorite state
+                >
+                  {favorite.favorite ? 'Unfavorite' : 'Favorite'}
+                </Button>
+              </Paper>
+            ))
         ) : (
           <Typography variant="body2">No favorites found.</Typography>
         )}

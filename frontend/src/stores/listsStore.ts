@@ -1,4 +1,3 @@
-// src/stores/listsStore.ts
 import create from 'zustand';
 import axios from 'axios';
 import { useAuthStore } from './authStore';
@@ -12,7 +11,7 @@ interface ConversionList {
 interface ListsState {
   lists: ConversionList[];
   fetchLists: () => void;
-  toggleFavorite: (id: number) => void;
+  toggleFavorite: (id: number, currentFavorite: boolean) => void; // Pass current favorite state
 }
 
 export const useListsStore = create<ListsState>((set) => ({
@@ -32,11 +31,18 @@ export const useListsStore = create<ListsState>((set) => ({
   },
 
   // Toggle favorite status for a conversion list
-  toggleFavorite: async (id: number) => {
+  toggleFavorite: async (id: number, currentFavorite: boolean) => {
+    console.log(`Toggling favorite status for list with id: ${id}, current status: ${currentFavorite}`);
+
     try {
-      await axios.put(`http://localhost:8081/conversion-lists/${id}/favorite`);
-      set((state) => ({
-        lists: state.lists.map((list) =>
+      // Send the opposite of the current favorite status in the request body
+      await axios.put(`http://localhost:8081/conversion-lists/${id}/favorite`, {
+        favorite: !currentFavorite, // Toggle the current favorite status
+      });
+
+      // Update the state after toggling favorite
+      set((state: ListsState) => ({
+        lists: state.lists.map((list: ConversionList) =>
           list.id === id ? { ...list, favorite: !list.favorite } : list
         ),
       }));

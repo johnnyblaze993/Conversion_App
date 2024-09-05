@@ -11,7 +11,7 @@ interface ConversionList {
 interface FavoritesState {
   favorites: ConversionList[];
   fetchFavorites: () => void;
-  toggleFavorite: (id: number) => void;
+  toggleFavorite: (id: number, currentFavorite: boolean) => void; // Pass current favorite state
 }
 
 export const useFavoritesStore = create<FavoritesState>((set) => ({
@@ -31,11 +31,14 @@ export const useFavoritesStore = create<FavoritesState>((set) => ({
   },
 
   // Toggle favorite status for a conversion list
-  toggleFavorite: async (id: number) => {
-    console.log(`Toggling favorite status for list with id: ${id}`);
+  toggleFavorite: async (id: number, currentFavorite: boolean) => {
+    console.log(`Toggling favorite status for list with id: ${id}, current status: ${currentFavorite}`);
 
     try {
-      await axios.put(`http://localhost:8081/conversion-lists/${id}/favorite`);
+      // Send the opposite of the current favorite status in the request body
+      await axios.put(`http://localhost:8081/conversion-lists/${id}/favorite`, {
+        favorite: !currentFavorite, // Toggle the current favorite status
+      });
 
       // Update the state after toggling favorite
       set((state: FavoritesState) => ({

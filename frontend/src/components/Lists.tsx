@@ -13,25 +13,34 @@ const Lists: React.FC = () => {
   return (
     <Container
       maxWidth="md"
-      style={{
-        height: '100vh',
+      sx={{
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        height: '100vh',
+        backgroundColor: '#222',
       }}
     >
-      <Box>
+      <Box
+        sx={{
+          width: '50%',
+          padding: '20px',
+          backgroundColor: '#333',
+          color: 'white',
+          borderRadius: '5px',
+        }}
+      >
         <Typography variant="h5" gutterBottom>Saved Conversion Lists</Typography>
         {lists.length > 0 ? (
           lists.map((list) => (
-            <Paper key={list.id} style={styles.listItem}>
+            <Paper key={list.id} sx={styles.listItem}>
               <Typography variant="body1">{list.name}</Typography>
               <FormControlLabel
                 control={
                   <Checkbox
                     checked={list.favorite}
-                    onChange={() => toggleFavorite(list.id)}
-                    color="primary"
+                    onChange={() => toggleFavorite(list.id, list.favorite)} // Update with current favorite state
+                    color={list.favorite ? 'secondary' : 'primary'}
                   />
                 }
                 label={list.favorite ? 'Unfavorite' : 'Favorite'}
