@@ -6,6 +6,14 @@ import { useConversionStore } from '../stores/conversionStore';
 import { useListsStore } from '../stores/listsStore';
 import { convertMeasurement } from '../utils/conversionUtils';
 
+interface ConversionItem {
+  ingredient: string;
+  originalMeasurement: number;
+  originalUnitId: number;
+  convertedMeasurement: number;
+  convertedUnitId: number;
+}
+
 const Convert: React.FC = () => {
   const [listName, setListName] = useState<string>('');  
   const [items, setItems] = useState([
@@ -42,36 +50,41 @@ const Convert: React.FC = () => {
       if (listResponse) {
         const listId = listResponse.id;
   
-        // Step 2: Prepare the conversion items
-        const formattedItems = items.map((item) => {
-          const originalUnitId = getUnitIdByName(item.originalUnit);
-          const convertedUnitId = getUnitIdByName(item.convertedUnit);
+        // Step 2: Prepare the conversion items, filtering out invalid unit IDs
+        const formattedItems = items
+          .map((item) => {
+            const originalUnitId = getUnitIdByName(item.originalUnit);
+            const convertedUnitId = getUnitIdByName(item.convertedUnit);
   
-          // Check for missing unit IDs and handle the case
-          if (originalUnitId === null || convertedUnitId === null) {
-            alert('Please select valid units for all items.');
-            throw new Error('Invalid unit ID');
-          }
+            // Check if unit IDs are valid (non-null)
+            if (originalUnitId === null || convertedUnitId === null) {
+              console.warn(`Skipping invalid item: ${item.ingredient}`);
+              return null;
+            }
   
-          return {
-            ingredient: item.ingredient,
-            originalMeasurement: parseFloat(item.originalMeasurement),
-            originalUnitId,
-            convertedMeasurement: parseFloat(item.convertedMeasurement),
-            convertedUnitId,
-          };
-        });
+            return {
+              ingredient: item.ingredient,
+              originalMeasurement: parseFloat(item.originalMeasurement),
+              originalUnitId,
+              convertedMeasurement: parseFloat(item.convertedMeasurement),
+              convertedUnitId,
+            };
+          })
+          .filter(item => item !== null) as ConversionItem[]; // Filter out invalid items
   
         // Step 3: Submit the valid items
-        await addConversionsToList(listId, formattedItems);
+        if (formattedItems.length === 0) {
+          alert('No valid conversions to add.');
+          return;
+        }
   
+        await addConversionsToList(listId, formattedItems);
         alert('Conversion list and items added successfully!');
       }
     } catch (error) {
       console.error('Error creating conversion list or adding items:', error);
     }
   };
-  
   
 
   const addNewItem = () => {
@@ -96,7 +109,7 @@ const Convert: React.FC = () => {
   return (
     <Container maxWidth="md" style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <Paper style={{ padding: '20px', backgroundColor: '#333', color: 'white', width: '100%' }}>
-      <Typography variant="h5" gutterBottom>Create New Conversion List</Typography>
+        <Typography variant="h5" gutterBottom>Create New Conversion List</Typography>
         <form onSubmit={handleSubmit}>
           <TextField
             label="List Name"
