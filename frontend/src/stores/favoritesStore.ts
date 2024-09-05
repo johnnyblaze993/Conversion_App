@@ -1,17 +1,15 @@
-// src/stores/favoritesStore.ts
 import create from 'zustand';
 import axios from 'axios';
 import { useAuthStore } from './authStore';
 
-interface Favorite {
+interface ConversionList {
   id: number;
   name: string;
   favorite: boolean;
-  createdAt: string;
 }
 
 interface FavoritesState {
-  favorites: Favorite[];
+  favorites: ConversionList[];
   fetchFavorites: () => void;
   toggleFavorite: (id: number) => void;
 }
@@ -19,7 +17,7 @@ interface FavoritesState {
 export const useFavoritesStore = create<FavoritesState>((set) => ({
   favorites: [],
 
-  // Fetch the favorite conversion lists for the user
+  // Fetch the user's favorite conversion lists
   fetchFavorites: async () => {
     const user = useAuthStore.getState().user;
     if (!user) return;
@@ -28,21 +26,25 @@ export const useFavoritesStore = create<FavoritesState>((set) => ({
       const response = await axios.get(`http://localhost:8081/conversion-lists/user/${user.id}`);
       set({ favorites: response.data });
     } catch (error) {
-      console.error('Failed to fetch favorites:', error);
+      console.error('Error fetching favorite conversion lists:', error);
     }
   },
 
   // Toggle favorite status for a conversion list
   toggleFavorite: async (id: number) => {
+    console.log(`Toggling favorite status for list with id: ${id}`);
+
     try {
       await axios.put(`http://localhost:8081/conversion-lists/${id}/favorite`);
-      set((state) => ({
-        favorites: state.favorites.map((favorite) =>
-          favorite.id === id ? { ...favorite, favorite: !favorite.favorite } : favorite
+
+      // Update the state after toggling favorite
+      set((state: FavoritesState) => ({
+        favorites: state.favorites.map((list: ConversionList) =>
+          list.id === id ? { ...list, favorite: !list.favorite } : list
         ),
       }));
     } catch (error) {
-      console.error('Failed to toggle favorite:', error);
+      console.error('Error toggling favorite status:', error);
     }
   },
 }));

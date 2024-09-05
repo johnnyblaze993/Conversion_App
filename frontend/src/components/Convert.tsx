@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
-import { TextField, Button, Container, Paper, Typography, Grid, Checkbox, FormControlLabel } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { TextField, Button, Container, Paper, Typography, Grid, Checkbox, FormControlLabel, MenuItem } from '@mui/material';
 import { useConversionStore } from '../stores/conversionStore';
+import { useUnitStore } from '../stores/unitStore';
 
 const Convert: React.FC = () => {
-  const [listName, setListName] = useState<string>('');  
+  const [listName, setListName] = useState<string>('');
   const [favorite, setFavorite] = useState<boolean>(false); // State for the favorite checkbox
   const [items, setItems] = useState([
     { ingredient: '', originalMeasurement: '', originalUnit: '', convertedMeasurement: '', convertedUnit: '' }
   ]);
   const createConversionList = useConversionStore((state) => state.createConversionList);
+  const { units, fetchUnits } = useUnitStore();
+
+  // Fetch all units on component mount
+  useEffect(() => {
+    fetchUnits();
+  }, [fetchUnits]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,22 +66,8 @@ const Convert: React.FC = () => {
             InputProps={{ style: { color: 'white' } }}
           />
 
-          {/* Checkbox for setting the list as favorite */}
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={favorite}
-                onChange={(e) => setFavorite(e.target.checked)}
-                style={{ color: 'white' }}
-              />
-            }
-            label="Mark as Favorite"
-            style={{ color: 'white' }}
-          />
-
           {items.map((item, index) => (
             <Grid container spacing={2} key={index}>
-              {/* Fields for adding items */}
               <Grid item xs={12} sm={6}>
                 <TextField
                   label="Ingredient"
@@ -104,13 +97,20 @@ const Convert: React.FC = () => {
                 <TextField
                   label="Original Unit"
                   variant="outlined"
+                  select
                   fullWidth
                   margin="normal"
                   value={item.originalUnit}
                   onChange={(e) => updateItem(index, 'originalUnit', e.target.value)}
                   InputLabelProps={{ style: { color: 'white' } }}
                   InputProps={{ style: { color: 'white' } }}
-                />
+                >
+                  {units.map((unit) => (
+                    <MenuItem key={unit.id} value={unit.id}>
+                      {unit.unitName}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -129,13 +129,20 @@ const Convert: React.FC = () => {
                 <TextField
                   label="Converted Unit"
                   variant="outlined"
+                  select
                   fullWidth
                   margin="normal"
                   value={item.convertedUnit}
                   onChange={(e) => updateItem(index, 'convertedUnit', e.target.value)}
                   InputLabelProps={{ style: { color: 'white' } }}
                   InputProps={{ style: { color: 'white' } }}
-                />
+                >
+                  {units.map((unit) => (
+                    <MenuItem key={unit.id} value={unit.id}>
+                      {unit.unitName}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
             </Grid>
           ))}
