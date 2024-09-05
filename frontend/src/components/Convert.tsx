@@ -37,7 +37,6 @@ const Convert: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
   
-    // Guard against missing user
     if (!user) {
       console.error('User is not logged in');
       return;
@@ -45,7 +44,7 @@ const Convert: React.FC = () => {
   
     try {
       // Step 1: Create the conversion list
-      const listResponse = await createList(listName, false); // Create the list and return listId
+      const listResponse = await createList(listName, false);
   
       if (listResponse) {
         const listId = listResponse.id;
@@ -56,7 +55,6 @@ const Convert: React.FC = () => {
             const originalUnitId = getUnitIdByName(item.originalUnit);
             const convertedUnitId = getUnitIdByName(item.convertedUnit);
   
-            // Check if unit IDs are valid (non-null)
             if (originalUnitId === null || convertedUnitId === null) {
               console.warn(`Skipping invalid item: ${item.ingredient}`);
               return null;
@@ -70,16 +68,23 @@ const Convert: React.FC = () => {
               convertedUnitId,
             };
           })
-          .filter(item => item !== null) as ConversionItem[]; // Filter out invalid items
+          .filter(item => item !== null) as ConversionItem[];
   
-        // Step 3: Submit the valid items
         if (formattedItems.length === 0) {
           alert('No valid conversions to add.');
           return;
         }
   
+        // Step 3: Submit the valid items
         await addConversionsToList(listId, formattedItems);
+  
         alert('Conversion list and items added successfully!');
+  
+        // Step 4: Clear the form
+        setListName(''); // Reset list name
+        setItems([  // Reset the items array to a single empty item
+          { ingredient: '', originalMeasurement: '', originalUnit: '', convertedMeasurement: '', convertedUnit: '' }
+        ]);
       }
     } catch (error) {
       console.error('Error creating conversion list or adding items:', error);
