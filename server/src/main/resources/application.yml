@@ -13,10 +13,15 @@ micronaut:
             - POST
             - PUT
             - DELETE
+            - OPTIONS  # Handle preflight checks
           allowed-headers:
-            - Authorization
-            - Content-Type
-            - X-Requested-With
+            - "Authorization"
+            - "Content-Type"
+            - "X-Requested-With"
+          exposed-headers:
+            - "Authorization"
+            - "Content-Type"
+          allow-credentials: true  # Allow Authorization and cookies
   security:
     enabled: false
     authentication: bearer

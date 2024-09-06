@@ -1,14 +1,19 @@
 import React, { useEffect } from 'react';
-import { Container, Paper, Typography, Box, Checkbox, FormControlLabel } from '@mui/material';
+import { Container, Paper, Typography, Box, Checkbox, FormControlLabel, IconButton } from '@mui/material';
+import { Delete } from '@mui/icons-material';
 import { useListsStore } from '../stores/listsStore';
 
 const Lists: React.FC = () => {
-  const { lists, fetchLists, toggleFavorite } = useListsStore();
+  const { lists, fetchLists, toggleFavorite, deleteConversionList } = useListsStore();
 
   useEffect(() => {
     // Fetch all conversion lists on component mount
     fetchLists();
   }, [fetchLists]);
+
+  const handleDelete = (id: number) => {
+    deleteConversionList(id);
+  };
 
   return (
     <Container
@@ -34,17 +39,33 @@ const Lists: React.FC = () => {
         {lists.length > 0 ? (
           lists.map((list) => (
             <Paper key={list.id} sx={styles.listItem}>
-              <Typography variant="body1">{list.name}</Typography>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={list.favorite}
-                    onChange={() => toggleFavorite(list.id, list.favorite)} // Update with current favorite state
-                    color={list.favorite ? 'secondary' : 'primary'}
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <Typography variant="body1">{list.name}</Typography>
+                <Box>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={list.favorite}
+                        onChange={() => toggleFavorite(list.id, list.favorite)} // Update with current favorite state
+                        color={list.favorite ? 'secondary' : 'primary'}
+                      />
+                    }
+                    label={list.favorite ? 'Unfavorite' : 'Favorite'}
                   />
-                }
-                label={list.favorite ? 'Unfavorite' : 'Favorite'}
-              />
+                  <IconButton
+                    aria-label="delete"
+                    onClick={() => handleDelete(list.id)}
+                    sx={{
+                      color: 'red',
+                      position: 'absolute',
+                      top: 10,
+                      right: 10,
+                    }}
+                  >
+                    <Delete />
+                  </IconButton>
+                </Box>
+              </Box>
             </Paper>
           ))
         ) : (
@@ -62,9 +83,7 @@ const styles = {
     color: 'white',
     borderRadius: '5px',
     marginTop: '10px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    position: 'relative', // Required for the red circle to be positioned absolutely
   } as React.CSSProperties,
 };
 

@@ -9,6 +9,7 @@ import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Options;
 // import io.micronaut.http.annotation.Post;
 // import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.PathVariable;
@@ -51,5 +52,15 @@ public class ConversionController {
             return HttpResponse.noContent();
         }
         return HttpResponse.notFound();
+    }
+
+    @Options("/{id}")
+    public HttpResponse<?> options(@PathVariable Long id) {
+        return HttpResponse.ok();
+    }
+
+    @Options("/")
+    public HttpResponse<?> optionsForRoot() {
+        return HttpResponse.ok();
     }
 }

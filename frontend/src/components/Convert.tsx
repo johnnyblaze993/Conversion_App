@@ -7,6 +7,7 @@ import { useListsStore } from '../stores/listsStore';
 import { convertMeasurement } from '../utils/conversionUtils';
 
 interface ConversionItem {
+  id: number;
   ingredient: string;
   originalMeasurement: number;
   originalUnitId: number;
