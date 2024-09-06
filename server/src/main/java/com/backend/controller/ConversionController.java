@@ -7,6 +7,7 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Get;
 // import io.micronaut.http.annotation.Post;
 // import io.micronaut.http.annotation.Body;
@@ -14,6 +15,8 @@ import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import jakarta.inject.Inject;
 import java.util.List;
+
+import java.util.Optional;
 
 @Controller("/conversions")
 public class ConversionController {
@@ -38,5 +41,15 @@ public class ConversionController {
     @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
     public HttpResponse<Conversion> createConversion(@Body Conversion conversion) {
         return HttpResponse.created(conversionRepository.save(conversion));
+    }
+
+    @Delete("/{id}")
+    public HttpResponse<Void> deleteConversion(@PathVariable Long id) {
+        Optional<Conversion> existingConversion = conversionRepository.findById(id);
+        if (existingConversion.isPresent()) {
+            conversionRepository.deleteById(id);
+            return HttpResponse.noContent();
+        }
+        return HttpResponse.notFound();
     }
 }

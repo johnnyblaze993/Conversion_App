@@ -7,6 +7,7 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Get;
 // import io.micronaut.http.annotation.Post;
 // import io.micronaut.http.annotation.Body;
@@ -48,4 +49,15 @@ public class ConversionListController {
         }
         return HttpResponse.notFound();
     }
+
+    @Delete("/{id}")
+    public HttpResponse<Void> deleteConversionList(@PathVariable Long id) {
+        Optional<ConversionList> existingList = conversionListRepository.findById(id);
+        if (existingList.isPresent()) {
+            conversionListRepository.deleteById(id);
+            return HttpResponse.noContent();
+        }
+        return HttpResponse.notFound();
+    }
+
 }
