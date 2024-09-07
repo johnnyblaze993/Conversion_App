@@ -7,13 +7,15 @@ import {
 	Typography,
 	MenuItem,
 } from "@mui/material";
-import { useUnitStore } from "../stores/unitStore"; // Your existing unit store
-import { usePreferencesStore } from "../stores/preferencesStore"; // We will create this to store preferences
+import { useUnitStore } from "../stores/unitStore"; // Fetch units from the store
+import { usePreferencesStore } from "../stores/preferencesStore"; // Store for managing preferred unit
+import { useSnackbarStore } from "../stores/snackbarStore"; // Store for triggering Snackbar
 
 const Preferences: React.FC = () => {
-	const { units, fetchUnits } = useUnitStore(); // Fetch units from store
-	const { preferredUnit, setPreferredUnit } = usePreferencesStore(); // Manage preferred unit in the new store
-	const [selectedUnit, setSelectedUnit] = useState<string>(preferredUnit || ""); // Keep track of the selected unit
+	const { units, fetchUnits } = useUnitStore(); // Fetch units from the store
+	const { preferredUnit, setPreferredUnit } = usePreferencesStore(); // Manage preferred unit
+	const { showSnackbar } = useSnackbarStore(); // Show Snackbar when preference is saved
+	const [selectedUnit, setSelectedUnit] = useState<string>(preferredUnit || ""); // Track selected unit
 
 	useEffect(() => {
 		fetchUnits(); // Fetch units on component mount
@@ -21,8 +23,8 @@ const Preferences: React.FC = () => {
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		setPreferredUnit(selectedUnit); // Save the selected unit in the preferences store
-		console.log("Preferred unit saved:", selectedUnit);
+		setPreferredUnit(selectedUnit); // Save the selected unit
+		showSnackbar(`Preferred unit set to ${selectedUnit}`, "success"); // Show success Snackbar
 	};
 
 	return (
@@ -56,7 +58,7 @@ const Preferences: React.FC = () => {
 						onChange={(e) => setSelectedUnit(e.target.value)}
 						InputLabelProps={{ style: { color: "white" } }}
 						InputProps={{ style: { color: "white" } }}
-						select // Use select to create a dropdown
+						select // Dropdown for units
 					>
 						{units.map((unit) => (
 							<MenuItem key={unit.id} value={unit.unitName}>
