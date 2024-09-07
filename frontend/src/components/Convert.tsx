@@ -14,19 +14,20 @@ import { useConversionStore } from "../stores/conversionStore";
 import { useListsStore } from "../stores/listsStore";
 import { convertMeasurement } from "../utils/conversionUtils";
 import { usePreferencesStore } from "../stores/preferencesStore";
+import { useSnackbarStore } from "../stores/snackbarStore";
 
 interface ConversionItem {
-	id: number;
+	id?: number;
 	ingredient: string;
-	originalMeasurement: number;
-	originalUnitId: number;
-	convertedMeasurement: number;
-	convertedUnitId: number;
+	originalMeasurement: string;
+	originalUnit: string;
+	convertedMeasurement: string;
+	convertedUnit: string;
 }
 
 const Convert: React.FC = () => {
 	const [listName, setListName] = useState<string>("");
-	const [items, setItems] = useState([
+	const [items, setItems] = useState<ConversionItem[]>([
 		{
 			ingredient: "",
 			originalMeasurement: "",
@@ -35,16 +36,29 @@ const Convert: React.FC = () => {
 			convertedUnit: "",
 		},
 	]);
+
+	// State variables for input fields
+	const [value, setValue] = useState<string>("");
+
+	// store
 	const { units, fetchUnits } = useUnitStore();
+	const { showSnackbar } = useSnackbarStore();
 	const { user } = useAuthStore(); // Fetch the logged-in user
 	const { createList } = useListsStore();
 	const { addConversionsToList } = useConversionStore();
 	const { preferredUnit } = usePreferencesStore(); // Get the user's preferred unit
-	const [selectedUnit, setSelectedUnit] = useState<string>(preferredUnit || ""); // Pre-select the preferred unit
 
 	useEffect(() => {
 		fetchUnits();
-	}, [fetchUnits]);
+
+		// Set the preferred unit as the default for the original unit of each item
+		setItems((prevItems) =>
+			prevItems.map((item) => ({
+				...item,
+				originalUnit: preferredUnit, // Auto-fill preferred unit
+			}))
+		);
+	}, [fetchUnits, preferredUnit]);
 
 	// Function to map unit name to unit ID for the request
 	const getUnitIdByName = (unitName: string) => {
@@ -54,6 +68,11 @@ const Convert: React.FC = () => {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+
+		if (!listName) {
+			showSnackbar("Please enter a list name.", "error");
+			return;
+		}
 
 		if (!user) {
 			console.error("User is not logged in");
@@ -86,26 +105,28 @@ const Convert: React.FC = () => {
 							convertedUnitId,
 						};
 					})
-					.filter((item) => item !== null) as ConversionItem[];
+					.filter((item) => item !== null);
 
 				if (formattedItems.length === 0) {
-					alert("No valid conversions to add.");
+					showSnackbar("No valid conversions to add.", "error");
 					return;
 				}
 
 				// Step 3: Submit the valid items
 				await addConversionsToList(listId, formattedItems);
 
-				alert("Conversion list and items added successfully!");
+				showSnackbar(
+					"Conversion list and items added successfully!",
+					"success"
+				);
 
 				// Step 4: Clear the form
 				setListName(""); // Reset list name
 				setItems([
-					// Reset the items array to a single empty item
 					{
 						ingredient: "",
 						originalMeasurement: "",
-						originalUnit: "",
+						originalUnit: preferredUnit, // Set the preferred unit for the new item
 						convertedMeasurement: "",
 						convertedUnit: "",
 					},
@@ -116,13 +137,18 @@ const Convert: React.FC = () => {
 		}
 	};
 
+	const isSubmitDisabled = items.some(
+		(item) =>
+			!item.ingredient || !item.originalMeasurement || !item.convertedUnit
+	);
+
 	const addNewItem = () => {
 		setItems([
 			...items,
 			{
 				ingredient: "",
 				originalMeasurement: "",
-				originalUnit: "",
+				originalUnit: preferredUnit, // Auto-fill the preferred unit for new item
 				convertedMeasurement: "",
 				convertedUnit: "",
 			},
@@ -223,9 +249,11 @@ const Convert: React.FC = () => {
 									variant="outlined"
 									fullWidth
 									margin="normal"
-									value={selectedUnit}
-									onChange={(e) => setSelectedUnit(e.target.value)}
-									select // Dropdown for units
+									value={item.originalUnit} // Updated to track originalUnit per item
+									onChange={(e) =>
+										updateItem(index, "originalUnit", e.target.value)
+									}
+									select
 									InputLabelProps={{ style: { color: "white" } }}
 									InputProps={{ style: { color: "white" } }}
 								>
@@ -249,7 +277,7 @@ const Convert: React.FC = () => {
 									}
 									InputLabelProps={{ style: { color: "white" } }}
 									InputProps={{ style: { color: "white" } }}
-									disabled // Auto-populated based on conversion
+									disabled
 								/>
 							</Grid>
 							<Grid item xs={12} sm={6}>
@@ -292,6 +320,7 @@ const Convert: React.FC = () => {
 						color="secondary"
 						fullWidth
 						style={{ marginTop: "20px" }}
+						disabled={isSubmitDisabled}
 					>
 						Save Conversion List
 					</Button>
