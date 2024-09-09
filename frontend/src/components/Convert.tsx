@@ -9,6 +9,7 @@ import {
   MenuItem,
   IconButton,
   Box,
+  useTheme,
 } from "@mui/material";
 import { Delete } from "@mui/icons-material"; // Import the delete icon
 import { useUnitStore } from "../stores/unitStore";
@@ -29,6 +30,7 @@ interface ConversionItem {
 }
 
 const Convert: React.FC = () => {
+  const theme = useTheme(); // Access the theme
   const [listName, setListName] = useState<string>("");
   const [items, setItems] = useState<ConversionItem[]>([
     {
@@ -211,18 +213,19 @@ const Convert: React.FC = () => {
   return (
     <Container
       maxWidth="md"
-      style={{
+      sx={{
         height: "100vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        backgroundColor: theme.palette.background.default, // Theme background
       }}
     >
       <Paper
-        style={{
+        sx={{
           padding: "20px",
-          backgroundColor: "#333",
-          color: "white",
+          backgroundColor: theme.palette.background.paper, // Theme paper background
+          color: theme.palette.text.primary, // Theme text color
           width: "100%",
         }}
       >
@@ -237,8 +240,11 @@ const Convert: React.FC = () => {
             margin="normal"
             value={listName}
             onChange={(e) => setListName(e.target.value)}
-            InputLabelProps={{ style: { color: "white" } }}
-            InputProps={{ style: { color: "white" } }}
+            InputLabelProps={{ style: { color: theme.palette.text.primary } }}
+            InputProps={{
+              style: { color: theme.palette.text.primary },
+              sx: { backgroundColor: theme.palette.background.default },
+            }}
           />
 
           <Box
@@ -259,8 +265,13 @@ const Convert: React.FC = () => {
                     onChange={(e) =>
                       updateItem(index, "ingredient", e.target.value)
                     }
-                    InputLabelProps={{ style: { color: "white" } }}
-                    InputProps={{ style: { color: "white" } }}
+                    InputLabelProps={{
+                      style: { color: theme.palette.text.primary },
+                    }}
+                    InputProps={{
+                      style: { color: theme.palette.text.primary },
+                      sx: { backgroundColor: theme.palette.background.default },
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12} sm={4}>
@@ -274,8 +285,13 @@ const Convert: React.FC = () => {
                     onChange={(e) =>
                       updateItem(index, "originalMeasurement", e.target.value)
                     }
-                    InputLabelProps={{ style: { color: "white" } }}
-                    InputProps={{ style: { color: "white" } }}
+                    InputLabelProps={{
+                      style: { color: theme.palette.text.primary },
+                    }}
+                    InputProps={{
+                      style: { color: theme.palette.text.primary },
+                      sx: { backgroundColor: theme.palette.background.default },
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12} sm={4}>
@@ -289,8 +305,13 @@ const Convert: React.FC = () => {
                     onChange={(e) =>
                       updateItem(index, "originalUnit", e.target.value)
                     }
-                    InputLabelProps={{ style: { color: "white" } }}
-                    InputProps={{ style: { color: "white" } }}
+                    InputLabelProps={{
+                      style: { color: theme.palette.text.primary },
+                    }}
+                    InputProps={{
+                      style: { color: theme.palette.text.primary },
+                      sx: { backgroundColor: theme.palette.background.default },
+                    }}
                   >
                     {units.map((unit) => (
                       <MenuItem key={unit.id} value={unit.unitName}>
@@ -310,7 +331,13 @@ const Convert: React.FC = () => {
                     onChange={(e) =>
                       updateItem(index, "convertedMeasurement", e.target.value)
                     }
-                    InputLabelProps={{ style: { color: "white" } }}
+                    InputLabelProps={{
+                      style: { color: theme.palette.text.primary },
+                    }}
+                    InputProps={{
+                      style: { color: theme.palette.text.primary },
+                      sx: { backgroundColor: theme.palette.background.default },
+                    }}
                     disabled
                   />
                 </Grid>
@@ -325,8 +352,13 @@ const Convert: React.FC = () => {
                     onChange={(e) =>
                       updateItem(index, "convertedUnit", e.target.value)
                     }
-                    InputLabelProps={{ style: { color: "white" } }}
-                    InputProps={{ style: { color: "white" } }}
+                    InputLabelProps={{
+                      style: { color: theme.palette.text.primary },
+                    }}
+                    InputProps={{
+                      style: { color: theme.palette.text.primary },
+                      sx: { backgroundColor: theme.palette.background.default },
+                    }}
                   >
                     {units.map((unit) => (
                       <MenuItem key={unit.id} value={unit.unitName}>
@@ -339,7 +371,7 @@ const Convert: React.FC = () => {
                   <IconButton
                     aria-label="delete"
                     onClick={() => handleDeleteItem(index)}
-                    sx={{ color: "red" }}
+                    sx={{ color: theme.palette.error.main }} // Use theme error color
                   >
                     <Delete />
                   </IconButton>
@@ -353,23 +385,34 @@ const Convert: React.FC = () => {
             variant="contained"
             color="primary"
             onClick={addNewItem}
-            style={{ marginTop: "20px" }}
+            sx={{ marginTop: "20px" }}
           >
             Add New Item
           </Button>
 
-          <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginTop: "20px",
+            }}
+          >
             <Button
               type="submit"
               variant="contained"
               color="secondary"
               fullWidth
-              style={{ marginRight: "10px" }}
+              sx={{ marginRight: "10px" }}
               disabled={isSubmitDisabled}
             >
               Save Conversion List
             </Button>
-            <Button variant="contained" onClick={handleClose} fullWidth>
+            <Button
+              variant="contained"
+              onClick={handleClose}
+              fullWidth
+              sx={{ backgroundColor: theme.palette.action.hover }} // Hover background color
+            >
               Close Without Saving
             </Button>
           </Box>
