@@ -118,7 +118,7 @@ const Lists: React.FC = () => {
                         color={list.favorite ? "secondary" : "primary"}
                       />
                     }
-                    label={list.favorite ? "Unfavorite" : "Favorite"}
+                    label={list.favorite ? "Unfav" : "Fav"}
                   />
                   <IconButton
                     aria-label="delete"
@@ -130,7 +130,7 @@ const Lists: React.FC = () => {
                       color: "red",
                       position: "absolute",
                       top: 10,
-                      right: 10,
+                      right: -7,
                     }}
                   >
                     <Delete />
