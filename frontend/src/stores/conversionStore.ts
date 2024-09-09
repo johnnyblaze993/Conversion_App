@@ -18,6 +18,7 @@ interface ConversionState {
 	) => Promise<void>;
 	fetchConversionsByList: (listId: number) => void;
 	conversions: ConversionItem[];
+	deleteConversion: (id: number) => void;
 }
 
 export const useConversionStore = create<ConversionState>((set) => ({
@@ -62,7 +63,7 @@ export const useConversionStore = create<ConversionState>((set) => ({
 
 	deleteConversion: async (id: number) => {
 		try {
-			await axios.delete(`/conversions/${id}`);
+			await axios.delete(`http://localhost:8081/conversions/${id}`);
 			set((state) => ({
 				conversions: state.conversions.filter(
 					(conversion) => conversion.id !== id
