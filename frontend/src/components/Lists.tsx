@@ -8,35 +8,34 @@ import {
   FormControlLabel,
   IconButton,
   Grid,
+  useTheme,
 } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import { useListsStore } from "../stores/listsStore";
-import { useConversionItemsStore } from "../stores/conversionItemsStore"; // Import conversion items store
-import { useConversionStore } from "../stores/conversionStore"; // Import conversion store for deleting items
-import { useSnackbarStore } from "../stores/snackbarStore"; // Import snackbar store
+import { useConversionItemsStore } from "../stores/conversionItemsStore";
+import { useConversionStore } from "../stores/conversionStore";
+import { useSnackbarStore } from "../stores/snackbarStore";
 
 interface ConversionItem {
-	id?: number;
-	ingredient: string;
-	originalMeasurement: number;
-	originalUnitId: number;
-	convertedMeasurement: number;
-	convertedUnitId: number;
+  id?: number;
+  ingredient: string;
+  originalMeasurement: number;
+  originalUnitId: number;
+  convertedMeasurement: number;
+  convertedUnitId: number;
 }
 
 const Lists: React.FC = () => {
+  const theme = useTheme(); // Access the current theme
   const { lists, fetchLists, toggleFavorite, deleteConversionList } =
     useListsStore();
-  const { conversionItems, fetchConversionItems} = useConversionItemsStore(); // Use conversion items store
-  const { deleteConversion, 
-    setConversionItems
-   } = useConversionStore(); // Access the delete function from the conversion store
-  const { showSnackbar } = useSnackbarStore(); // Use snackbar to show messages
+  const { conversionItems, fetchConversionItems } = useConversionItemsStore();
+  const { deleteConversion, setConversionItems } = useConversionStore();
+  const { showSnackbar } = useSnackbarStore();
 
-  const [selectedListId, setSelectedListId] = useState<number | null>(null); // Track the selected list
+  const [selectedListId, setSelectedListId] = useState<number | null>(null);
 
   useEffect(() => {
-    // Fetch all conversion lists on component mount
     fetchLists();
   }, [fetchLists]);
 
@@ -46,28 +45,25 @@ const Lists: React.FC = () => {
 
   const handleDeleteConversionItem = async (id: number) => {
     try {
-      await deleteConversion(id); // Delete the conversion item by its ID
-      showSnackbar("Conversion item deleted successfully", "success"); // Show success snackbar
-  
-      // Remove the deleted item from the state immediately
-      const updatedItems = conversionItems.filter((item: ConversionItem) => item.id !== id);
-      setConversionItems(updatedItems); // Set the updated array directly
-  
-      // Refetch conversion items for the selected list to ensure it's up-to-date
+      await deleteConversion(id);
+      showSnackbar("Conversion item deleted successfully", "success");
+
+      const updatedItems = conversionItems.filter(
+        (item: ConversionItem) => item.id !== id
+      );
+      setConversionItems(updatedItems);
+
       if (selectedListId) {
         fetchConversionItems(selectedListId);
       }
     } catch (error) {
-      showSnackbar("Error deleting conversion item", "error"); // Show error snackbar
+      showSnackbar("Error deleting conversion item", "error");
     }
   };
-  
-  
 
-  // Handle click on a list to fetch conversion items
   const handleListClick = (listId: number) => {
     setSelectedListId(listId);
-    fetchConversionItems(listId); // Fetch conversion items for the selected list
+    fetchConversionItems(listId);
   };
 
   return (
@@ -78,15 +74,15 @@ const Lists: React.FC = () => {
         justifyContent: "center",
         alignItems: "center",
         height: "100vh",
-        backgroundColor: "#222",
+        backgroundColor: theme.palette.background.default, // Theme background
       }}
     >
       <Box
         sx={{
           width: "50%",
           padding: "20px",
-          backgroundColor: "#333",
-          color: "white",
+          backgroundColor: theme.palette.background.paper, // Theme paper background
+          color: theme.palette.text.primary, // Theme text color
           borderRadius: "5px",
         }}
       >
@@ -97,8 +93,11 @@ const Lists: React.FC = () => {
           lists.map((list) => (
             <Paper
               key={list.id}
-              sx={styles.listItem}
-              onClick={() => handleListClick(list.id)} // Fetch conversion items when list is clicked
+              sx={{
+                ...styles.listItem,
+                backgroundColor: theme.palette.background.paper, // Use theme for item background
+              }}
+              onClick={() => handleListClick(list.id)}
             >
               <Box
                 sx={{
@@ -108,13 +107,17 @@ const Lists: React.FC = () => {
                   width: "100%",
                 }}
               >
-                <Typography variant="body1">{list.name}</Typography>
+                <Typography variant="body1" color="textPrimary">
+                  {list.name}
+                </Typography>
                 <Box>
                   <FormControlLabel
                     control={
                       <Checkbox
                         checked={list.favorite}
-                        onChange={() => toggleFavorite(list.id, list.favorite)} // Update with current favorite state
+                        onChange={() =>
+                          toggleFavorite(list.id, list.favorite)
+                        }
                         color={list.favorite ? "secondary" : "primary"}
                       />
                     }
@@ -123,11 +126,11 @@ const Lists: React.FC = () => {
                   <IconButton
                     aria-label="delete"
                     onClick={(e) => {
-                      e.stopPropagation(); // Prevent triggering list click
+                      e.stopPropagation();
                       handleDeleteList(list.id);
                     }}
                     sx={{
-                      color: "red",
+                      color: theme.palette.error.main, // Use theme error color
                       position: "absolute",
                       top: 10,
                       right: -7,
@@ -138,12 +141,11 @@ const Lists: React.FC = () => {
                 </Box>
               </Box>
 
-              {/* Display conversion items if this list is selected */}
               {selectedListId === list.id && (
                 <Box
                   sx={{
                     marginTop: "10px",
-                    backgroundColor: "#444",
+                    backgroundColor: theme.palette.grey[900], // Darker background for conversions
                     padding: "10px",
                   }}
                 >
@@ -158,12 +160,12 @@ const Lists: React.FC = () => {
                           justifyContent: "space-between",
                           alignItems: "center",
                           padding: "10px",
-                          backgroundColor: "#555",
+                          backgroundColor: theme.palette.grey[800], // Even darker background
                           marginBottom: "10px",
                         }}
                       >
                         <Grid item xs={8}>
-                          <Typography variant="body2">
+                          <Typography variant="body2" color="textSecondary">
                             Ingredient: {item.ingredient}, Original:{" "}
                             {item.originalMeasurement} (Unit ID:{" "}
                             {item.originalUnitId}), Converted:{" "}
@@ -175,10 +177,10 @@ const Lists: React.FC = () => {
                           <IconButton
                             aria-label="delete"
                             onClick={(e) => {
-                              e.stopPropagation(); // Prevent triggering list click
-                              handleDeleteConversionItem(item.id!); // Call delete handler
+                              e.stopPropagation();
+                              handleDeleteConversionItem(item.id!);
                             }}
-                            sx={{ color: "red" }}
+                            sx={{ color: theme.palette.error.main }} // Theme error color
                           >
                             <Delete />
                           </IconButton>
@@ -186,9 +188,7 @@ const Lists: React.FC = () => {
                       </Grid>
                     ))
                   ) : (
-                    <Typography variant="body2">
-                      No conversion items found.
-                    </Typography>
+                    <Typography variant="body2">No conversion items found.</Typography>
                   )}
                 </Box>
               )}
@@ -210,7 +210,7 @@ const styles = {
     borderRadius: "5px",
     marginTop: "10px",
     position: "relative",
-    cursor: "pointer", // Already added here
+    cursor: "pointer",
   } as React.CSSProperties,
 };
 

@@ -1,79 +1,87 @@
 import React, { useState, useEffect } from "react";
-import {
-	TextField,
-	Button,
-	Container,
-	Paper,
-	Typography,
-	MenuItem,
-} from "@mui/material";
-import { useUnitStore } from "../stores/unitStore"; // Fetch units from the store
-import { usePreferencesStore } from "../stores/preferencesStore"; // Store for managing preferred unit
-import { useSnackbarStore } from "../stores/snackbarStore"; // Store for triggering Snackbar
+import { Box, Button, MenuItem, Paper, TextField, Typography } from "@mui/material";
+import { usePreferencesStore } from "../stores/preferencesStore";
+import { useUnitStore } from "../stores/unitStore"; // Assuming you have a store to fetch units
 
 const Preferences: React.FC = () => {
-	const { units, fetchUnits } = useUnitStore(); // Fetch units from the store
-	const { preferredUnit, setPreferredUnit } = usePreferencesStore(); // Manage preferred unit
-	const { showSnackbar } = useSnackbarStore(); // Show Snackbar when preference is saved
-	const [selectedUnit, setSelectedUnit] = useState<string>(preferredUnit || ""); // Track selected unit
+  const {
+    themeType,
+    selectedThemeIndex,
+    toggleTheme,
+    setThemeIndex,
+    preferredUnit,
+    setPreferredUnit,
+  } = usePreferencesStore(); // Get theme and unit preferences from store
 
-	useEffect(() => {
-		fetchUnits(); // Fetch units on component mount
-	}, [fetchUnits]);
+  const { units, fetchUnits } = useUnitStore(); // Assuming you have a unit store
+  const [selectedUnit, setSelectedUnit] = useState(preferredUnit || "");
 
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		setPreferredUnit(selectedUnit); // Save the selected unit
-		showSnackbar(`Preferred unit set to ${selectedUnit}`, "success"); // Show success Snackbar
-	};
+  useEffect(() => {
+    fetchUnits(); // Fetch units when the component loads
+  }, [fetchUnits]);
 
-	return (
-		<Container
-			maxWidth="md"
-			style={{
-				height: "100vh",
-				display: "flex",
-				justifyContent: "center",
-				alignItems: "center",
-			}}
-		>
-			<Paper
-				style={{
-					padding: "20px",
-					backgroundColor: "#333",
-					color: "white",
-					width: "100%",
-				}}
-			>
-				<Typography variant="h5" gutterBottom>
-					User Preferences
-				</Typography>
-				<form onSubmit={handleSubmit}>
-					<TextField
-						label="Preferred Unit"
-						variant="outlined"
-						fullWidth
-						margin="normal"
-						value={selectedUnit}
-						onChange={(e) => setSelectedUnit(e.target.value)}
-						InputLabelProps={{ style: { color: "white" } }}
-						InputProps={{ style: { color: "white" } }}
-						select // Dropdown for units
-					>
-						{units.map((unit) => (
-							<MenuItem key={unit.id} value={unit.unitName}>
-								{unit.unitName}
-							</MenuItem>
-						))}
-					</TextField>
+  const handleThemeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setThemeIndex(parseInt(event.target.value, 10)); // Update selected theme
+  };
 
-					<Button type="submit" variant="contained" color="primary" fullWidth>
-						Save
-					</Button>
-				</form>
-			</Paper>
-		</Container>
-	);
+  const handleUnitChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newUnit = event.target.value;
+    setSelectedUnit(newUnit); // Set the selected unit locally
+    setPreferredUnit(newUnit); // Update the preferred unit in the store
+  };
+
+  return (
+    <Paper
+      sx={{
+        padding: "20px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        backgroundColor: "background.paper",
+        color: "text.primary",
+		justifyContent: "center",
+		height: "100%",
+      }}
+    >
+      <Typography variant="h5">Preferences</Typography>
+
+      {/* Theme Toggle */}
+      <Button variant="contained" onClick={toggleTheme} sx={{ marginTop: 2 }}>
+        Toggle to {themeType === "light" ? "Dark" : "Light"} Mode
+      </Button>
+
+      {/* Dropdown to select theme */}
+      <TextField
+        select
+        label="Select Theme Option"
+        value={selectedThemeIndex}
+        onChange={handleThemeChange}
+        sx={{ marginTop: 2, minWidth: 200 }}
+      >
+        {[1, 2, 3].map((option, index) => (
+          <MenuItem key={index} value={index}>
+            {themeType.charAt(0).toUpperCase() + themeType.slice(1)} Option{" "}
+            {option}
+          </MenuItem>
+        ))}
+      </TextField>
+
+      {/* Dropdown to select preferred unit */}
+      <TextField
+        select
+        label="Preferred Unit"
+        value={selectedUnit}
+        onChange={handleUnitChange}
+        sx={{ marginTop: 2, minWidth: 200 }}
+      >
+        {units.map((unit) => (
+          <MenuItem key={unit.id} value={unit.unitName}>
+            {unit.unitName}
+          </MenuItem>
+        ))}
+      </TextField>
+    </Paper>
+  );
 };
 
 export default Preferences;

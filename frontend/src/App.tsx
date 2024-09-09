@@ -36,7 +36,12 @@ const App: React.FC = () => {
 
 	return (
 		<>
-			<Box>
+			<Box sx={{
+        flexGrow: 1,
+        marginBottom: "20px",
+        backgroundColor: "background.paper",
+        color: "text.primary",
+      }}>
 				<Toolbar>
 					<Typography variant="h6" style={{ flexGrow: 1 }}>
 						Conversion App
