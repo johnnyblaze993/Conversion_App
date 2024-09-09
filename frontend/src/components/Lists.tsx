@@ -79,7 +79,7 @@ const Lists: React.FC = () => {
     >
       <Box
         sx={{
-          width: "50%",
+          width: "75%",
           padding: "20px",
           backgroundColor: theme.palette.background.paper, // Theme paper background
           color: theme.palette.text.primary, // Theme text color
@@ -96,6 +96,7 @@ const Lists: React.FC = () => {
               sx={{
                 ...styles.listItem,
                 backgroundColor: theme.palette.background.paper, // Use theme for item background
+                color: theme.palette.text.primary, // Use theme for text color
               }}
               onClick={() => handleListClick(list.id)}
             >
@@ -145,11 +146,12 @@ const Lists: React.FC = () => {
                 <Box
                   sx={{
                     marginTop: "10px",
-                    backgroundColor: theme.palette.grey[900], // Darker background for conversions
+                    backgroundColor: theme.palette.background.default, // Theme background
                     padding: "10px",
+                    borderRadius: "5px", // Adding some rounding
                   }}
                 >
-                  <Typography variant="h6">Conversion Items:</Typography>
+                  <Typography variant="h6" color="textPrimary">Conversion Items:</Typography>
                   {conversionItems.length > 0 ? (
                     conversionItems.map((item) => (
                       <Grid
@@ -160,8 +162,9 @@ const Lists: React.FC = () => {
                           justifyContent: "space-between",
                           alignItems: "center",
                           padding: "10px",
-                          backgroundColor: theme.palette.grey[800], // Even darker background
+                          backgroundColor: theme.palette.background.paper, // Use theme background
                           marginBottom: "10px",
+                          borderRadius: "5px", // Keep borders consistent
                         }}
                       >
                         <Grid item xs={8}>
@@ -180,7 +183,7 @@ const Lists: React.FC = () => {
                               e.stopPropagation();
                               handleDeleteConversionItem(item.id!);
                             }}
-                            sx={{ color: theme.palette.error.main }} // Theme error color
+                            sx={{ color: theme.palette.error.main }} // Use theme error color
                           >
                             <Delete />
                           </IconButton>
@@ -188,14 +191,14 @@ const Lists: React.FC = () => {
                       </Grid>
                     ))
                   ) : (
-                    <Typography variant="body2">No conversion items found.</Typography>
+                    <Typography variant="body2" color="textSecondary">No conversion items found.</Typography>
                   )}
                 </Box>
               )}
             </Paper>
           ))
         ) : (
-          <Typography variant="body2">No conversion lists found.</Typography>
+          <Typography variant="body2" color="textSecondary">No conversion lists found.</Typography>
         )}
       </Box>
     </Container>
@@ -205,8 +208,6 @@ const Lists: React.FC = () => {
 const styles = {
   listItem: {
     padding: "10px",
-    backgroundColor: "#444",
-    color: "white",
     borderRadius: "5px",
     marginTop: "10px",
     position: "relative",

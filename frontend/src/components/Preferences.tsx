@@ -31,7 +31,7 @@ const Preferences: React.FC = () => {
   };
 
   return (
-    <Paper
+    <Box
       sx={{
         padding: "20px",
         display: "flex",
@@ -39,8 +39,9 @@ const Preferences: React.FC = () => {
         alignItems: "center",
         backgroundColor: "background.paper",
         color: "text.primary",
-		justifyContent: "center",
-		height: "100%",
+        justifyContent: "center",
+        height: "100%",
+        width: "100%",
       }}
     >
       <Typography variant="h5">Preferences</Typography>
@@ -80,7 +81,7 @@ const Preferences: React.FC = () => {
           </MenuItem>
         ))}
       </TextField>
-    </Paper>
+    </Box>
   );
 };
 

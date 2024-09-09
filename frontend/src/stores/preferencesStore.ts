@@ -23,46 +23,52 @@ export const usePreferencesStore = create<PreferencesStore>((set) => ({
   darkThemes: [
     {
       palette: {
-        primary: { main: "#610C9F" },
-        secondary: { main: "#940B92" },
-        background: { default: "#DA0C81", paper: "#E95793" },
+        primary: { main: "#610C9F", light: "#8D40C7", dark: "#48007B" },
+        secondary: { main: "#DA0C81", light: "#E850A4", dark: "#B00063" },
+        background: { default: "#1B0136", paper: "#1B0136" },
+        text: { primary: "#E0E0E0", secondary: "#CFCFCF" },
       },
     },
     {
       palette: {
-        primary: { main: "#451952" },
-        secondary: { main: "#662549" },
-        background: { default: "#AE445A", paper: "#F39F5A" },
+        primary: { main: "#451952", light: "#6D2B7D", dark: "#320F3B" },
+        secondary: { main: "#AE445A", light: "#D87077", dark: "#8C3447" },
+        background: { default: "#281230", paper: "#281230" },
+        text: { primary: "#EFEFEF", secondary: "#CFCFCF" },
       },
     },
     {
       palette: {
-        primary: { main: "#040D12" },
-        secondary: { main: "#183D3D" },
-        background: { default: "#5C8374", paper: "#93B1A6" },
+        primary: { main: "#040D12", light: "#1A2C36", dark: "#02080A" },
+        secondary: { main: "#5C8374", light: "#789C91", dark: "#406156" },
+        background: { default: "#12171A", paper: "#12171A" },
+        text: { primary: "#D0D0D0", secondary: "#A3A3A3" },
       },
     },
   ],
   lightThemes: [
     {
       palette: {
-        primary: { main: "#F6F5F2" },
-        secondary: { main: "#F0EBE3" },
-        background: { default: "#F3D0D7", paper: "#FFEFEF" },
+        primary: { main: "#F6F5F2", light: "#FFFFFF", dark: "#D9D7D3" },
+        secondary: { main: "#F3D0D7", light: "#F9E4E7", dark: "#E5B7BF" },
+        background: { default: "#FFF5F5", paper: "#F0EBE3" },
+        text: { primary: "#333333", secondary: "#666666" },
       },
     },
     {
       palette: {
-        primary: { main: "#FA7070" },
-        secondary: { main: "#FEFDED" },
-        background: { default: "#C6EBC5", paper: "#A1C398" },
+        primary: { main: "#FA7070", light: "#FF8C8C", dark: "#E05454" },
+        secondary: { main: "#A1C398", light: "#B9D3B4", dark: "#849F7E" },
+        background: { default: "#FEFDED", paper: "#FEFDED" },
+        text: { primary: "#2A2A2A", secondary: "#555555" },
       },
     },
     {
       palette: {
-        primary: { main: "#88AB8E" },
-        secondary: { main: "#AFC8AD" },
-        background: { default: "#EEE7DA", paper: "#F2F1EB" },
+        primary: { main: "#88AB8E", light: "#A1C3A6", dark: "#6A8D71" },
+        secondary: { main: "#EEE7DA", light: "#F5F0E8", dark: "#CFC7B9" },
+        background: { default: "#F2F1EB", paper: "#F2F1EB" },
+        text: { primary: "#222222", secondary: "#555555" },
       },
     },
   ],

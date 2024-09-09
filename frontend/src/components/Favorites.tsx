@@ -24,7 +24,7 @@ const Favorites: React.FC = () => {
     >
       <Box
         sx={{
-          width: "50%",
+          width: "75%",
           padding: "20px",
           backgroundColor: theme.palette.background.paper, // Use theme's paper background
           color: theme.palette.text.primary, // Use theme's primary text color

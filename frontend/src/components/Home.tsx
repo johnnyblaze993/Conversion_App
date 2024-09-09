@@ -13,6 +13,7 @@ const Home: React.FC = () => {
         alignItems: "center",
         height: "100vh",
         backgroundColor: theme.palette.background.default, // Use theme background
+        color: theme.palette.text.primary, // Use primary text color for readability
       }}
     >
       <Box>
@@ -25,9 +26,12 @@ const Home: React.FC = () => {
             fontSize: "24px",
             padding: "20px 40px",
             backgroundColor: theme.palette.secondary.main, // Use the theme's secondary color
-            color: theme.palette.secondary.contrastText, // Ensure the text color contrasts with the button
+            color: theme.palette.secondary.contrastText, // Ensure text contrasts with the button
+            borderRadius: "8px", // Add a smooth border radius
+            boxShadow: `0px 4px 12px ${theme.palette.secondary.light}`, // Add subtle shadow with lighter tone
             "&:hover": {
-              backgroundColor: theme.palette.secondary.dark, // Use dark shade on hover
+              backgroundColor: theme.palette.secondary.dark, // Darker shade on hover
+              boxShadow: `0px 6px 15px ${theme.palette.secondary.dark}`, // Enhanced shadow on hover
             },
           }}
         >
