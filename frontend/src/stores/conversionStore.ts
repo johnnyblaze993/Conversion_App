@@ -12,13 +12,14 @@ interface ConversionItem {
 }
 
 interface ConversionState {
-	addConversionsToList: (
-		listId: number,
-		items: ConversionItem[]
-	) => Promise<void>;
-	fetchConversionsByList: (listId: number) => void;
 	conversions: ConversionItem[];
+	addConversionsToList: (listId: number, items: ConversionItem[]) => Promise<void>;
+	fetchConversionsByList: (listId: number) => void;
+	fetchAllConversions: () => void; // Fetch all conversion items
+	fetchConversionById: (id: number) => void; // Fetch a single conversion item by its ID
+	updateConversionItem: (id: number, updatedItem: ConversionItem) => void; // Update a conversion item
 	deleteConversion: (id: number) => void;
+	setConversionItems: (items: ConversionItem[]) => void; // Manually set conversion items
 }
 
 export const useConversionStore = create<ConversionState>((set) => ({
@@ -37,9 +38,9 @@ export const useConversionStore = create<ConversionState>((set) => ({
 					listId: listId,
 					ingredient: item.ingredient,
 					originalMeasurement: item.originalMeasurement,
-					originalUnitId: item.originalUnitId, // Assuming these IDs are coming from a units table
+					originalUnitId: item.originalUnitId,
 					convertedMeasurement: item.convertedMeasurement,
-					convertedUnitId: item.convertedUnitId, // Assuming these IDs are coming from a units table
+					convertedUnitId: item.convertedUnitId,
 				});
 			}
 
@@ -57,10 +58,50 @@ export const useConversionStore = create<ConversionState>((set) => ({
 			);
 			set({ conversions: response.data });
 		} catch (error) {
-			console.error("Error fetching conversions:", error);
+			console.error("Error fetching conversions by list:", error);
 		}
 	},
 
+	// Fetch all conversions
+	fetchAllConversions: async () => {
+		try {
+			const response = await axios.get(`http://localhost:8081/conversions`);
+			set({ conversions: response.data });
+		} catch (error) {
+			console.error("Error fetching all conversions:", error);
+		}
+	},
+
+	// Fetch a single conversion item by its ID
+	fetchConversionById: async (id: number) => {
+		try {
+			const response = await axios.get(`http://localhost:8081/conversions/${id}`);
+			set((state) => ({
+				conversions: state.conversions.map((item) =>
+					item.id === id ? response.data : item
+				),
+			}));
+		} catch (error) {
+			console.error(`Error fetching conversion with ID ${id}:`, error);
+		}
+	},
+
+	// Update a specific conversion item
+	updateConversionItem: async (id: number, updatedItem: ConversionItem) => {
+		try {
+			await axios.put(`http://localhost:8081/conversions/${id}`, updatedItem);
+			set((state) => ({
+				conversions: state.conversions.map((item) =>
+					item.id === id ? { ...item, ...updatedItem } : item
+				),
+			}));
+			console.log("Conversion item updated successfully.");
+		} catch (error) {
+			console.error("Error updating conversion item:", error);
+		}
+	},
+
+	// Delete a specific conversion item
 	deleteConversion: async (id: number) => {
 		try {
 			await axios.delete(`http://localhost:8081/conversions/${id}`);
@@ -69,8 +110,14 @@ export const useConversionStore = create<ConversionState>((set) => ({
 					(conversion) => conversion.id !== id
 				),
 			}));
+			console.log("Conversion item deleted successfully.");
 		} catch (error) {
 			console.error("Error deleting conversion:", error);
 		}
+	},
+
+	// Manually set the conversions list (used to remove an item after deletion or other actions)
+	setConversionItems: (items: ConversionItem[]) => {
+		set({ conversions: items });
 	},
 }));

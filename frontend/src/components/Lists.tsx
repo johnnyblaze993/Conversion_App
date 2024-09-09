@@ -15,11 +15,22 @@ import { useConversionItemsStore } from "../stores/conversionItemsStore"; // Imp
 import { useConversionStore } from "../stores/conversionStore"; // Import conversion store for deleting items
 import { useSnackbarStore } from "../stores/snackbarStore"; // Import snackbar store
 
+interface ConversionItem {
+	id?: number;
+	ingredient: string;
+	originalMeasurement: number;
+	originalUnitId: number;
+	convertedMeasurement: number;
+	convertedUnitId: number;
+}
+
 const Lists: React.FC = () => {
   const { lists, fetchLists, toggleFavorite, deleteConversionList } =
     useListsStore();
-  const { conversionItems, fetchConversionItems } = useConversionItemsStore(); // Use conversion items store
-  const { deleteConversion } = useConversionStore(); // Access the delete function from the conversion store
+  const { conversionItems, fetchConversionItems} = useConversionItemsStore(); // Use conversion items store
+  const { deleteConversion, 
+    setConversionItems
+   } = useConversionStore(); // Access the delete function from the conversion store
   const { showSnackbar } = useSnackbarStore(); // Use snackbar to show messages
 
   const [selectedListId, setSelectedListId] = useState<number | null>(null); // Track the selected list
@@ -37,10 +48,21 @@ const Lists: React.FC = () => {
     try {
       await deleteConversion(id); // Delete the conversion item by its ID
       showSnackbar("Conversion item deleted successfully", "success"); // Show success snackbar
+  
+      // Remove the deleted item from the state immediately
+      const updatedItems = conversionItems.filter((item: ConversionItem) => item.id !== id);
+      setConversionItems(updatedItems); // Set the updated array directly
+  
+      // Refetch conversion items for the selected list to ensure it's up-to-date
+      if (selectedListId) {
+        fetchConversionItems(selectedListId);
+      }
     } catch (error) {
       showSnackbar("Error deleting conversion item", "error"); // Show error snackbar
     }
   };
+  
+  
 
   // Handle click on a list to fetch conversion items
   const handleListClick = (listId: number) => {
