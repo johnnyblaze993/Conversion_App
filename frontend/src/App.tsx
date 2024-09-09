@@ -7,7 +7,7 @@ import {
 	Link,
 	useNavigate,
 } from "react-router-dom";
-import { AppBar, Toolbar, Button, Typography, Container } from "@mui/material";
+import { AppBar, Toolbar, Button, Typography, Container, Box } from "@mui/material";
 import Home from "./components/Home";
 import Convert from "./components/Convert";
 import Favorites from "./components/Favorites";
@@ -36,7 +36,7 @@ const App: React.FC = () => {
 
 	return (
 		<>
-			<AppBar position="static">
+			<Box>
 				<Toolbar>
 					<Typography variant="h6" style={{ flexGrow: 1 }}>
 						Conversion App
@@ -64,19 +64,19 @@ const App: React.FC = () => {
 						</Button>
 					)}
 				</Toolbar>
-			</AppBar>
+			</Box>
 
 			{/* Welcome message centered */}
-			{isAuthenticated && user && (
+			{/* {isAuthenticated && user && (
 				<Typography variant="h6" style={{ flexGrow: 1, textAlign: "center" }}>
 					Welcome, {user.username}!
 				</Typography>
-			)}
+			)} */}
 
 			<Container
 				maxWidth="lg"
 				style={{
-					height: "100vh",
+					height: "90vh",
 					width: "100vw",
 					padding: 0,
 					display: "flex",
